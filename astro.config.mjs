@@ -5,12 +5,14 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://yerald231ger.github.io',
+	base: '/csharprefactor',
 	integrations: [
 		starlight({
 			title: 'Learn C#',
 			description: 'A comprehensive guide to C# programming',
 			social: {
-				github: 'https://github.com/yourusername/your-repo',
+				github: 'https://github.com/yerald231ger/csharprefactor',
 			},
 			sidebar: [
 				{
