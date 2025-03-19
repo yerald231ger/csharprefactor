@@ -5,8 +5,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://yerald231ger.github.io',
-	base: '/csharprefactor',
+	site: 'https://csharprefactor.vercel.app',
 	integrations: [
 		starlight({
 			title: 'Learn C#',
