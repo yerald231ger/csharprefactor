@@ -1,0 +1,253 @@
+---
+title: Interactive Classes and Objects Examples
+description: Try out interactive examples of classes and objects in C#
+---
+
+import CodeDemo from '../../../components/CodeDemo.astro';
+
+# Interactive Classes and Objects Examples
+
+This page contains interactive code examples that you can run to see classes and objects in action.
+
+## Basic Class Definition
+
+Here's a simple Person class with properties and a method:
+
+<CodeDemo 
+  title="Person Class Example" 
+  interactive={true}
+  description="A basic class definition with properties and a method."
+  code={`using System;
+
+public class Person
+{
+    // Properties
+    public string Name { get; set; }
+    public int Age { get; set; }
+    
+    // Constructor
+    public Person(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+    
+    // Method
+    public void Introduce()
+    {
+        Console.WriteLine($"Hello, my name is {Name} and I am {Age} years old.");
+    }
+    
+    // Static method
+    public static void DescribeClass()
+    {
+        Console.WriteLine("The Person class represents a human being with basic attributes.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Create instances of Person
+        Person person1 = new Person("Alice", 30);
+        Person person2 = new Person("Bob", 25);
+        
+        // Call instance methods
+        person1.Introduce();
+        person2.Introduce();
+        
+        // Call static method
+        Person.DescribeClass();
+    }
+}`}
+/>
+
+## Properties with Validation
+
+This example demonstrates properties with validation:
+
+<CodeDemo 
+  title="Property Validation" 
+  interactive={true}
+  description="Using properties to validate data before assigning to fields."
+  highlightLines="8-22"
+  code={`using System;
+
+public class BankAccount
+{
+    // Private fields
+    private string accountNumber;
+    private decimal balance;
+    
+    // Property with automatic implementation
+    public string AccountNumber 
+    { 
+        get { return accountNumber; }
+        private set { accountNumber = value; }
+    }
+    
+    // Property with validation
+    public decimal Balance
+    {
+        get { return balance; }
+        private set
+        {
+            if (value < 0)
+                throw new ArgumentException("Balance cannot be negative");
+            balance = value;
+        }
+    }
+    
+    // Constructor
+    public BankAccount(string accountNumber, decimal initialDeposit)
+    {
+        AccountNumber = accountNumber;
+        Balance = initialDeposit; // This will use the validation in the property
+    }
+    
+    // Methods
+    public void Deposit(decimal amount)
+    {
+        if (amount <= 0)
+            throw new ArgumentException("Deposit amount must be positive");
+            
+        Balance += amount;
+        Console.WriteLine($"Deposited: {amount:C}. New balance: {Balance:C}");
+    }
+    
+    public bool Withdraw(decimal amount)
+    {
+        if (amount <= 0)
+            throw new ArgumentException("Withdrawal amount must be positive");
+            
+        if (amount > Balance)
+        {
+            Console.WriteLine("Insufficient funds");
+            return false;
+        }
+        
+        Balance -= amount;
+        Console.WriteLine($"Withdrew: {amount:C}. New balance: {Balance:C}");
+        return true;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        try
+        {
+            // Create a bank account
+            BankAccount account = new BankAccount("ACC123456", 1000);
+            
+            // Perform operations
+            account.Deposit(500);
+            account.Withdraw(200);
+            
+            // Try to withdraw more than the balance
+            account.Withdraw(2000);
+            
+            // Display final balance
+            Console.WriteLine($"Final balance: {account.Balance:C}");
+            
+            // This would cause an exception - uncomment to test
+            // BankAccount badAccount = new BankAccount("ACC654321", -100);
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}`}
+/>
+
+## Inheritance Example
+
+This example shows how inheritance works in C#:
+
+<CodeDemo 
+  title="Inheritance" 
+  interactive={true}
+  description="Demonstrating how a derived class inherits from a base class."
+  code={`using System;
+
+// Base class
+public class Animal
+{
+    public string Name { get; set; }
+    
+    public Animal(string name)
+    {
+        Name = name;
+    }
+    
+    public virtual void MakeSound()
+    {
+        Console.WriteLine("Animal makes a sound");
+    }
+    
+    public void Sleep()
+    {
+        Console.WriteLine($"{Name} is sleeping...");
+    }
+}
+
+// Derived class
+public class Dog : Animal
+{
+    public string Breed { get; set; }
+    
+    public Dog(string name, string breed) : base(name)
+    {
+        Breed = breed;
+    }
+    
+    // Override base class method
+    public override void MakeSound()
+    {
+        Console.WriteLine($"{Name} barks: Woof! Woof!");
+    }
+    
+    // Additional method specific to Dog
+    public void Fetch()
+    {
+        Console.WriteLine($"{Name} is fetching the ball!");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Create instances
+        Animal genericAnimal = new Animal("Generic Animal");
+        Dog dog = new Dog("Buddy", "Golden Retriever");
+        
+        // Call methods on base class instance
+        Console.WriteLine("--- Animal ---");
+        genericAnimal.MakeSound();
+        genericAnimal.Sleep();
+        
+        // Call methods on derived class instance
+        Console.WriteLine("\\n--- Dog ---");
+        Console.WriteLine($"Name: {dog.Name}, Breed: {dog.Breed}");
+        dog.MakeSound();  // Overridden method
+        dog.Sleep();      // Inherited method
+        dog.Fetch();      // Dog-specific method
+        
+        // Demonstrate polymorphism
+        Console.WriteLine("\\n--- Polymorphism ---");
+        Animal polymorphicDog = new Dog("Rex", "German Shepherd");
+        polymorphicDog.MakeSound();  // Calls Dog's implementation
+        
+        // This would not compile because Animal doesn't have Fetch method
+        // polymorphicDog.Fetch();
+    }
+}`}
+/>
+
+## Next Steps
+
+These interactive examples help illustrate how classes and objects work in C#. For more details, return to the [Classes and Objects](/oop/classes-objects) main documentation page. 

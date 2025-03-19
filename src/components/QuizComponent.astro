@@ -1,0 +1,245 @@
+---
+interface Question {
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+interface Props {
+  title: string;
+  questions: Question[];
+}
+
+const { title, questions } = Astro.props;
+---
+
+<div class="quiz-container my-8 border rounded-lg overflow-hidden border-gray-200 dark:border-gray-700">
+  <div class="bg-indigo-700 px-6 py-4 text-white">
+    <h3 class="text-xl font-bold">{title}</h3>
+    <p class="text-indigo-100 text-sm mt-1">Test your knowledge with this interactive quiz</p>
+  </div>
+  
+  <div class="p-6 bg-white dark:bg-gray-800">
+    <div class="quiz" data-questions={JSON.stringify(questions)}>
+      <div class="current-question">
+        <div class="question-progress text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Question <span class="current-index">1</span> of <span class="total-questions">{questions.length}</span>
+        </div>
+        
+        <div class="question-text text-lg font-medium text-gray-900 dark:text-white mb-4"></div>
+        
+        <div class="options space-y-3">
+          <!-- Options will be populated by JavaScript -->
+        </div>
+        
+        <div class="explanation mt-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hidden">
+          <div class="text-gray-800 dark:text-gray-200"></div>
+        </div>
+        
+        <div class="navigation mt-6 flex justify-between">
+          <button class="prev-button px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            Previous
+          </button>
+          <button class="next-button px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            Next
+          </button>
+        </div>
+      </div>
+      
+      <div class="results hidden">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Quiz Results</h3>
+        <div class="score-display text-center py-8">
+          <div class="score-value text-5xl font-bold text-indigo-600 dark:text-indigo-400"></div>
+          <div class="score-label text-gray-600 dark:text-gray-400 mt-2">Correct Answers</div>
+        </div>
+        <div class="feedback text-gray-800 dark:text-gray-200 mt-4 text-center"></div>
+        <button class="restart-button w-full mt-6 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+          Restart Quiz
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Initialize all quizzes on the page
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.quiz').forEach(initQuiz);
+  });
+
+  function initQuiz(quizElement) {
+    const questions = JSON.parse(quizElement.dataset.questions || '[]');
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answeredQuestions = new Set();
+    
+    const elements = {
+      currentQuestion: quizElement.querySelector('.current-question'),
+      results: quizElement.querySelector('.results'),
+      currentIndexSpan: quizElement.querySelector('.current-index'),
+      totalQuestionsSpan: quizElement.querySelector('.total-questions'),
+      questionText: quizElement.querySelector('.question-text'),
+      options: quizElement.querySelector('.options'),
+      explanation: quizElement.querySelector('.explanation'),
+      explanationText: quizElement.querySelector('.explanation div'),
+      prevButton: quizElement.querySelector('.prev-button'),
+      nextButton: quizElement.querySelector('.next-button'),
+      scoreValue: quizElement.querySelector('.score-value'),
+      feedback: quizElement.querySelector('.feedback'),
+      restartButton: quizElement.querySelector('.restart-button')
+    };
+    
+    // Initial setup
+    displayQuestion(currentQuestionIndex);
+    updateNavigation();
+    
+    // Event listeners
+    elements.prevButton.addEventListener('click', goToPreviousQuestion);
+    elements.nextButton.addEventListener('click', goToNextQuestion);
+    elements.restartButton.addEventListener('click', restartQuiz);
+    
+    function displayQuestion(index) {
+      const question = questions[index];
+      
+      elements.currentIndexSpan.textContent = index + 1;
+      elements.totalQuestionsSpan.textContent = questions.length;
+      elements.questionText.textContent = question.question;
+      
+      // Clear options
+      elements.options.innerHTML = '';
+      
+      // Create option buttons
+      question.options.forEach((option, optionIndex) => {
+        const optionButton = document.createElement('button');
+        optionButton.className = 'option-button w-full text-left px-4 py-3 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
+        
+        // If question was already answered, apply appropriate styling
+        if (answeredQuestions.has(index)) {
+          if (optionIndex === question.correctIndex) {
+            optionButton.classList.add('bg-green-100', 'dark:bg-green-900/30', 'border-green-200', 'dark:border-green-800');
+          } else if (optionIndex === question.selectedIndex) {
+            optionButton.classList.add('bg-red-100', 'dark:bg-red-900/30', 'border-red-200', 'dark:border-red-800');
+          }
+        }
+        
+        optionButton.textContent = option;
+        optionButton.addEventListener('click', () => selectOption(optionIndex));
+        elements.options.appendChild(optionButton);
+      });
+      
+      // Show explanation if question was answered
+      if (answeredQuestions.has(index)) {
+        elements.explanation.classList.remove('hidden');
+        elements.explanationText.textContent = question.explanation;
+        elements.nextButton.disabled = false;
+      } else {
+        elements.explanation.classList.add('hidden');
+        elements.nextButton.disabled = true;
+      }
+    }
+    
+    function selectOption(optionIndex) {
+      // Prevent selecting if already answered
+      if (answeredQuestions.has(currentQuestionIndex)) {
+        return;
+      }
+      
+      const currentQuestion = questions[currentQuestionIndex];
+      currentQuestion.selectedIndex = optionIndex;
+      
+      // Mark question as answered
+      answeredQuestions.add(currentQuestionIndex);
+      
+      // Update score
+      if (optionIndex === currentQuestion.correctIndex) {
+        score++;
+      }
+      
+      // Style options
+      const optionButtons = elements.options.querySelectorAll('.option-button');
+      optionButtons.forEach((button, index) => {
+        if (index === currentQuestion.correctIndex) {
+          button.classList.add('bg-green-100', 'dark:bg-green-900/30', 'border-green-200', 'dark:border-green-800');
+        } else if (index === optionIndex && optionIndex !== currentQuestion.correctIndex) {
+          button.classList.add('bg-red-100', 'dark:bg-red-900/30', 'border-red-200', 'dark:border-red-800');
+        }
+      });
+      
+      // Show explanation
+      elements.explanation.classList.remove('hidden');
+      elements.explanationText.textContent = currentQuestion.explanation;
+      
+      // Enable next button
+      elements.nextButton.disabled = false;
+      
+      // Show results if all questions answered
+      if (answeredQuestions.size === questions.length && currentQuestionIndex === questions.length - 1) {
+        showResults();
+      }
+    }
+    
+    function goToPreviousQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayQuestion(currentQuestionIndex);
+        updateNavigation();
+      }
+    }
+    
+    function goToNextQuestion() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion(currentQuestionIndex);
+        updateNavigation();
+      } else if (answeredQuestions.size === questions.length) {
+        showResults();
+      }
+    }
+    
+    function updateNavigation() {
+      elements.prevButton.disabled = currentQuestionIndex === 0;
+      
+      if (!answeredQuestions.has(currentQuestionIndex)) {
+        elements.nextButton.disabled = true;
+      } else {
+        elements.nextButton.disabled = false;
+      }
+    }
+    
+    function showResults() {
+      elements.currentQuestion.classList.add('hidden');
+      elements.results.classList.remove('hidden');
+      
+      elements.scoreValue.textContent = `${score}/${questions.length}`;
+      
+      // Feedback based on score
+      const percentage = (score / questions.length) * 100;
+      let feedback;
+      
+      if (percentage >= 90) {
+        feedback = "Excellent! You've mastered this topic.";
+      } else if (percentage >= 70) {
+        feedback = "Good job! You have a solid understanding of the material.";
+      } else if (percentage >= 50) {
+        feedback = "Not bad, but there's room for improvement. Consider reviewing the material.";
+      } else {
+        feedback = "You might want to study this topic more thoroughly.";
+      }
+      
+      elements.feedback.textContent = feedback;
+    }
+    
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      answeredQuestions = new Set();
+      
+      elements.results.classList.add('hidden');
+      elements.currentQuestion.classList.remove('hidden');
+      
+      displayQuestion(currentQuestionIndex);
+      updateNavigation();
+    }
+  }
+</script> 

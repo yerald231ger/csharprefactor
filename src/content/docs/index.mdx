@@ -1,36 +1,63 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
+title: Learn C# Programming
+description: A comprehensive guide to C# programming concepts, from basics to advanced topics
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  title: |
+    Learn C# 
+    <span
+      class="font-black text-transparent
+        bg-clip-text bg-gradient-to-b
+        from-accent-700 to-accent-400
+        dark:from-accent-500 dark:to-accent-200"
+    >
+      Programming
+    </span>
+  tagline: Master C# programming with clear explanations and interactive examples
   image:
-    file: ../../assets/houston.webp
+    file: ../../assets/csharp-logo.svg
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Get Started
+      link: /csharp-basics/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/yourusername/your-repo
+      icon: github
       variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## Welcome to the C# Learning Center
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="C# Basics" icon="pencil">
+		Learn syntax, data types, control structures, and other fundamental concepts.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Object-Oriented Programming" icon="add-document">
+		Master classes, inheritance, polymorphism, and encapsulation in C#.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+	<Card title="Advanced Features" icon="setting">
+		Explore LINQ, async/await, delegates, events, and other powerful C# features.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Design Patterns" icon="open-book">
+		Implement common design patterns with practical C# examples.
+	</Card>
+</CardGrid>
+
+## Why Learn C#?
+
+C# is a versatile, modern programming language developed by Microsoft. It powers everything from web applications to desktop software, games, mobile apps, and cloud services. C# combines the power of C++ with the simplicity of Visual Basic, making it both powerful and approachable.
+
+<CardGrid>
+	<Card title="Clean Architecture" icon="document">
+		Build maintainable applications using SOLID principles and clean architecture.
+	</Card>
+	<Card title="Domain-Driven Design" icon="bars">
+		Create domain-focused software with bounded contexts and ubiquitous language.
+	</Card>
+	<Card title="C# Evolution" icon="rocket">
+		Stay updated with the latest features introduced in each C# version.
 	</Card>
 </CardGrid>
