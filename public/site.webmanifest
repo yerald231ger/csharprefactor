@@ -1,0 +1,14 @@
+{
+  "name": "C# Refactor",
+  "short_name": "CsRefactor",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#8A2BE2",
+  "background_color": "#ffffff",
+  "display": "standalone"
+} 
